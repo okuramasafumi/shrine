@@ -1,0 +1,63 @@
+= Hanna
+
+Hanna is an RDoc generator built with simplicity, beauty
+and ease of browsing in mind.
+
+== Installation
+
+    gem install hanna
+
+== Usage
+
+    rdoc -o doc -f hanna lib
+
+An alternative is to set the `RDOCOPT` environment variable:
+
+    RDOCOPT="-f hanna"
+
+This will make RDoc always use hanna unless it is explicitly overridden.
+
+== Integrating with RubyGems
+
+If you put the following line in your .gemrc, this will make
+RubyGems use Hanna for all rdoc generation:
+
+    rdoc: -f hanna
+
+After doing this, if you wish to have documentation for all your installed gems
+to be formatted in hanna:
+
+    gem rdoc --all --overwrite
+
+== Rake task
+
+For repeated generation of API docs, you can set up a Rake task. Set
+hanna as the RDoc generator:
+
+    require 'rdoc/task'
+    RDoc::Task.new do |rdoc|
+      rdoc.generator = 'hanna'
+    end
+
+== Modification to RDoc
+
+Hanna makes a small modification to RDoc to generate more
+friendly documentation.  It changes label lists to use a table
+instead of a description list, since it is very difficult to
+get visually appealing styling for description lists without
+cutting corners (like using fixed widths).
+
+== Contributors
+
+The Hanna template was created by {Mislav}[http://mislav.uniqpath.com/] and
+since then has seen contributions from:
+
+1. {Tony Strauss}[https://github.com/DesigningPatterns], who participated from
+   the early start and made tons of fixes and enhancements to the template.
+2. {Michael Granger}[https://github.com/ged] who maintained the original RDoc template.
+3. {Hongli Lai}[https://blog.phusion.nl/] with the search filter for methods.
+4. {Erik Hollensbe}[https://github.com/erikh] a serious refactoring and up to
+   date with RDoc 2.5.x and 3.x, now named 'hanna-nouveau'.
+5. {James Tucker}[https://github.com/raggi] minor cleanups and RubyGems integration
+6. {Jeremy Evans}[https://github.com/jeremyevans] RDoc 4+ support, switch from
+   haml/sass to erb, maintenance since 2014.
