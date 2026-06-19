@@ -296,6 +296,21 @@ describe Shrine::Attacher do
       @attacher.promote_cached(location: "foo")
       assert_equal "foo", @attacher.file.id
     end
+
+    it "deletes promoted cached file" do
+      cached_file = @attacher.attach_cached(fakeio)
+      @attacher.promote_cached
+      refute cached_file.exists?
+      assert @attacher.file.exists?
+    end
+
+    it "doesn't delete cached file when promotion fails" do
+      cached_file = @attacher.attach_cached(fakeio)
+      @attacher.shrine_class.expects(:upload).raises("error")
+
+      assert_raises(RuntimeError) { @attacher.promote_cached }
+      assert cached_file.exists?
+    end
   end
 
   describe "#promote" do
@@ -335,6 +350,12 @@ describe Shrine::Attacher do
       @attacher.file = @attacher.upload(fakeio)
       @attacher.promote
       refute @attacher.changed?
+    end
+
+    it "doesn't delete promoted file when it matches cached file" do
+      cached_file = @attacher.attach_cached(fakeio)
+      @attacher.promote(storage: :cache, location: cached_file.id)
+      assert @attacher.file.exists?
     end
   end
 

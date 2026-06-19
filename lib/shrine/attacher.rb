@@ -168,7 +168,13 @@ class Shrine
       #     attacher.promote
       #     attacher.stored? #=> true
       def promote(storage: store_key, **)
-        set upload(file, storage, action: :store, **)
+        cached_file = file
+        promoted_file = upload(cached_file, storage, action: :store, **)
+
+        set promoted_file
+        cached_file.delete if cached?(cached_file) && cached_file != promoted_file
+
+        promoted_file
       end
 
       # Delegates to `Shrine.upload`, passing the #context.
