@@ -172,7 +172,7 @@ class Shrine
         promoted_file = upload(cached_file, storage, action: :store, **)
 
         set promoted_file
-        cached_file.delete if cached?(cached_file) && cached_file != promoted_file
+        delete_promoted_cached(cached_file, promoted_file)
 
         promoted_file
       end
@@ -374,6 +374,18 @@ class Shrine
         end
 
         uploaded_file
+      end
+
+      # Deletes cached files that were successfully promoted.
+      def delete_promoted_cached(file, promoted_file)
+        case file
+        when Shrine::UploadedFile
+          file.delete if cached?(file) && file != promoted_file
+        when Hash
+          file.each { |key, value| delete_promoted_cached(value, promoted_file[key]) if promoted_file.respond_to?(:[]) }
+        when Array
+          file.each_with_index { |value, index| delete_promoted_cached(value, promoted_file[index]) if promoted_file.respond_to?(:[]) }
+        end
       end
 
       # Whether attached file should be uploaded to permanent storage.
